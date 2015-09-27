@@ -1,0 +1,8 @@
+pbr>=0.6,!=0.7,<1.0
+tox
+pytest
+pytest-cov
+coverage
+coveralls
+redis>=2.7
+#pyzmq>=14.7.0

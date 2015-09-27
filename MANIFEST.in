@@ -1,0 +1,6 @@
+include AUTHORS
+include LICENSE
+include README.md
+include setup.py
+include tox.ini
+prune .git

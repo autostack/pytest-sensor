@@ -1,0 +1,6 @@
+---
+hosts:
+- address: 172.16.208.151
+  connection: smart
+- address: 172.16.164.162
+  connection: smart

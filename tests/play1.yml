@@ -1,0 +1,10 @@
+---
+gather_facts: true
+- hosts: all
+  tasks:
+  - name: just a setup
+    setup:
+  - name: just a uname
+    command: uname -a
+  - name: just a ping
+    ping:
