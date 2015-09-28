@@ -182,7 +182,7 @@ def pytest_exception_interact(node):
 #    return timeout, method
 
 
-class Tracer(object):
+class TraceContext(object):
     def __init__(self, queue):
         self._q = queue
 
@@ -201,7 +201,10 @@ class Tracer(object):
                 }
         self._q.publish(TEST_CAHNNEL_ID, data)
 
-    def close(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self._q.publish(TEST_CAHNNEL_ID, {'type': 'MONITORDONE'})
 
 
@@ -209,6 +212,5 @@ class Tracer(object):
 def track(request):
     '''
     '''
-    tr = Tracer(queue)
-    yield tr
-    tr.close()
+    with TraceContext(queue) as tr:
+        yield tr
