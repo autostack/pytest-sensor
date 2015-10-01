@@ -2,78 +2,82 @@
 # -*- coding: UTF-8 -*-
 
 import pytest
-import time
 from pprint import pprint as pp
 
-__author__ = 'Avi Tal <avi3tal@gmail.com>'
-__date__ = 'Sep 1, 2015'
 
-
-def test_time(ctx):
-    time.sleep(1)
-    print ctx
-
-
-def test_false(ctx):
-    assert False, 'aaaaaaaaaaaaaaaaa'
-
-
-def test_all_attr_exists(ctx):
-    assert hasattr(ctx, 'all'), 'all attr does not exists'
-    assert hasattr(ctx, 'hosts'), 'hosts attr does not exists'
-    ctx['test'] = []
-    assert hasattr(ctx, 'test'), 'Failed to add new attr'
-    del ctx['test']
-    assert not hasattr(ctx, 'test'), 'Failed to delete new attr'
-
-
-def test_slice(ctx):
+def test_ctx(context):
     print
-    pp(ctx.all[:2])
-    pp(ctx.hosts[1])
-    pp(ctx.all[-1])
+    model, _ = context
+    print model
+    print type(model)
+    pp(model)
+    l1 = len(model)
+    print 'Adding test group'
+    model['test'] = []
+    print 'ctx.test >>', model.test
+    print 'type(ctx.test) >>', type(model.test)
+    assert len(model) - 1 == l1, 'Length was not increased'
+
+    print 'Deleting test group'
+    del model['test']
+    l1 = len(model)
+    pp(model)
+    assert len(model) == l1, 'Length was not increased'
 
 
-def test_ping(ctx, run):
+def test_all_attr_exists(context):
+    model, _ = context
+    assert hasattr(model, 'all'), 'all attr does not exists'
+    assert hasattr(model, 'hosts'), 'hosts attr does not exists'
+    model['test'] = []
+    assert hasattr(model, 'test'), 'Failed to add new attr'
+    del model['test']
+    assert not hasattr(model, 'test'), 'Failed to delete new attr'
+
+
+def test_slice(context):
     print
-    pp(run.ping(ctx.all))
-    pp(run.ping(ctx.all[0]))
-    pp(run.ping(ctx.all[:-1]))
+    model, _ = context
+    pp(model.all[:2])
+    pp(model.hosts[1])
+    pp(model.all[-1])
 
 
-def test_hosts_uname(ctx, run):
+def test_ping(context):
     print
-    future = run.command(ctx.hosts, 'uname -a', run_async=True)
+    model, run = context
+    pp(run.ping(model.all))
+    pp(run.ping(model.all[0]))
+    pp(run.ping(model.all[:-1]))
+
+
+def test_hosts_uname(context):
+    print
+    model, run = context
+    future = run.command(model.hosts, 'uname -a', run_async=True)
     print 'Future >>> ', future
     pp(future.wait(60, 2))
 
 
 @pytest.mark.parametrize('playbook', ['/Users/avi/git/pytest-ansible/tests/play1.yml'])
-def test_play1(ctx, run, playbook):
+def test_play1(context, playbook):
     print
-    pp(run.run_playbook(ctx.hosts, playbook))
+    model, run = context
+    pp(run.run_playbook(model.hosts, playbook))
 
 
-def test_setup_manually(ctx, run):
+def test_setup_factory(context):
     print
-    run.setup(ctx.hosts)
-    pp(ctx)
-    pp(ctx.hosts[1].facts)
-#    print ctx.hosts.facts.default_ipv4.address
-    ctx.set_concrete_os()
-    pp(ctx)
-    ctx.set_concrete_os()
-    run.setup(ctx.hosts)
-    pp(ctx)
-    print(type(ctx.hosts[1].facts))
+    model, _ = context
+    pp(model)
+    pp(model.hosts[1].facts)
+    pp(model)
+    print(type(model.hosts[1].facts))
 
 
-def test_setup_context(ctx, run):
+def test_only_ctx_facts(context):
     print
-    run.setup_context(ctx)
-    print(type(ctx.hosts[1].facts))
-
-
-def test_only_ctx_facts(ctx):
-    print
-    print(type(ctx.hosts[1].facts))
+    model, _ = context
+    pp(model.hosts[1].facts)
+    pp(model)
+    print(type(model.hosts[1].facts))

@@ -1,6 +1,18 @@
 ---
-hosts:
-- address: 172.16.208.151
-  connection: smart
-- address: 172.16.164.162
-  connection: smart
+default: develop
+develop:
+  hosts:
+  - address: 172.16.208.151
+    connection: smart
+  - address: 172.16.164.162
+    connection: smart
+  local:
+  - address: 127.0.0.1
+    connection: local
+    user: avi
+production:
+  hosts:
+  - address: 172.16.208.151
+    connection: smart
+  - address: 172.16.164.162
+    connection: smart

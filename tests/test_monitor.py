@@ -38,27 +38,28 @@ pub = PublishMock()
 
 
 @pytest.mark.monitor
-def test_ctx(ctx, track):
+def test_ctx(context, track):
     print()
-    pp(ctx)
-    l1 = len(ctx)
+    model, _ = context
+    pp(model)
+    l1 = len(model)
     print('Adding test group')
-    ctx['test'] = []
-    print('ctx.test >>', ctx.test)
-    print ('type(ctx.test) >>', type(ctx.test))
-    assert len(ctx) - 1 == l1, 'Length was not increased'
+    model['test'] = []
+    print('ctx.test >>', model.test)
+    print ('type(ctx.test) >>', type(model.test))
+    assert len(model) - 1 == l1, 'Length was not increased'
 
     print('Deleting test group')
-    del ctx['test']
-    l1 = len(ctx)
-    pp(ctx)
-    assert len(ctx) == l1, 'Length was not increased'
+    del model['test']
+    l1 = len(model)
+    pp(model)
+    assert len(model) == l1, 'Length was not increased'
 
-    track.register(ctx.all.address, ['netwok', 'filesystem'])
+    track.register(model.all.address, ['netwok', 'filesystem'])
     pub.send_warning()
     time.sleep(2)
 #    assert False, 'aaaaaaaaaajasd,amksndlakisdja,msdakmsndakjsd,ajksd,amn'
-    track.unregister(ctx.all.address, ['netwok', 'filesystem'])
+    track.unregister(model.all.address, ['netwok', 'filesystem'])
     pub.send_warning()
     time.sleep(2)
 
